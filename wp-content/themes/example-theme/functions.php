@@ -46,6 +46,12 @@ function theme_setup(): void {
 
 add_action( 'after_setup_theme', 'theme_setup' );
 
+
+
+
+
+
+
 // load styles
 
 function style_setup(): void {
@@ -72,10 +78,7 @@ require_once get_template_directory() . '/inc/class-wp-bootstrap-navwalker.php';
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_bootstrap');
 
 
-function mytheme_enqueue_carousel_script(): void {
-    wp_enqueue_script('mytheme-carousel-script', get_template_directory_uri() . '/js/carousel.js', array('bootstrap-js'), null, true);
-}
-add_action('wp_enqueue_scripts', 'mytheme_enqueue_carousel_script');
+
 
 
 // load javascript
@@ -89,6 +92,15 @@ function script_setup(): void {
 }
 
 add_action( 'wp_enqueue_scripts', 'script_setup' );
+
+function my_theme_enqueue_scripts() {
+    // Register the script like this for a theme:
+    wp_register_script( 'category-filter', get_template_directory_uri() . '/js/category-filter.js', array( 'jquery' ), null, true );
+
+    // For either a plugin or a theme, you can then enqueue the script:
+    wp_enqueue_script( 'category-filter' );
+}
+add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_scripts' );
 
 
 // custom functions

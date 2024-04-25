@@ -10,14 +10,14 @@
 
 <body <?php body_class(); ?>>
 <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-custom-color">
         <div class="container-fluid">
-            <a class="navbar-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+            <a class="navbar-brand" href="<?php echo esc_url(home_url('/')); ?>">
                 <?php
-                if ( function_exists( 'the_custom_logo' ) ) {
+                if (function_exists('the_custom_logo')) {
                     the_custom_logo();
                 } else {
-                    bloginfo( 'name' );
+                    bloginfo('name');
                 }
                 ?>
             </a>
@@ -28,14 +28,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <?php
-                if ( class_exists('WP_Bootstrap_Navwalker') ) {
-                    wp_nav_menu( array(
-                        'theme_location'  => 'main-menu',
-                        'depth'           => 2,
-                        'container'       => false,
-                        'menu_class'      => 'navbar-nav ms-auto',
-                        'fallback_cb'     => 'WP_Bootstrap_Navwalker::fallback',
-                        'walker'          => new WP_Bootstrap_Navwalker()
+                if (class_exists('WP_Bootstrap_Navwalker')) {
+                    wp_nav_menu(array(
+                        'theme_location' => 'main-menu',
+                        'depth' => 2,
+                        'container' => false,
+                        'menu_class' => 'navbar-nav ms-auto',
+                        'fallback_cb' => 'WP_Bootstrap_Navwalker::fallback',
+                        'walker' => new WP_Bootstrap_Navwalker(),
                     ));
                 }
                 ?>
