@@ -1,8 +1,6 @@
 <?php
 get_header();
 ?>
-
-
 <section class="hero">
     <div id="carouselExampleCaptions" class="carousel slide">
         <div class="carousel-indicators">
@@ -18,7 +16,7 @@ get_header();
                 $products_page_url = get_permalink($products_page_id);
                 ?>
                 <a href="<?php echo esc_url($products_page_url); ?>">
-                    <img src="<?php echo get_template_directory_uri(); ?>/images/tiktok-logo-white.png" class="d-block w-100" alt="Home Slide">
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/home-slide.jpg" class="d-block w-100" alt="Home Slide">
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Welcome to Our Site</h5>
                         <p>Discover our services and find out how we can help you achieve success.</p>
@@ -29,11 +27,11 @@ get_header();
             <!-- Products Slide -->
             <div class="carousel-item">
                 <?php
-                $products_page_id = 33;
-                $products_page_url = get_permalink($products_page_id);
+                $category_id = get_cat_ID('Products');
+                $category_link = get_category_link($category_id);
                 ?>
-                <a href="<?php echo esc_url($products_page_url); ?>">
-                    <img src="<?php echo get_template_directory_uri(); ?>/images/tiktok-logo-white.png" class="d-block w-100" alt="Products Slide">
+                <a href="<?php echo esc_url($category_link); ?>">
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/products-slide.jpg" class="d-block w-100" alt="Products Slide">
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Explore Our Products</h5>
                         <p>Check out our latest products that can propel your business forward.</p>
@@ -48,7 +46,7 @@ get_header();
                 $products_page_url = get_permalink($products_page_id);
                 ?>
                 <a href="<?php echo esc_url($products_page_url); ?>">
-                    <img src="<?php echo get_template_directory_uri(); ?>/images/tiktok-logo-white.png" class="d-block w-100" alt="Products Slide">
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/about-us-slide.jpg" class="d-block w-100" alt="Products Slide">
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Learn More About Us</h5>
                         <p>Get to know our story, our values, and our commitment to quality.</p>
@@ -66,6 +64,10 @@ get_header();
         </button>
     </div>
 
+    <div class="greeting-container">
+        <?php echo add_greeting(); ?>
+    </div>
+
     <div class="hero-text">
 	    <?php
 	    if ( have_posts() ) :
@@ -79,7 +81,6 @@ get_header();
 	    endif;
 	    ?>
     </div>
-
     <?php the_custom_header_markup(); ?>
     <!-- <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/map.svg" alt="hero"> -->
 </section>
@@ -94,6 +95,22 @@ get_header();
         ?>
         </div>
     </section>
+    <div class="products-search-wrapper">
+        <section class="search">
+            <h2 class="search-header">Search For Products</h2>
+            <div class="search-input">
+                <?php get_search_form(); ?>
+            </div>
+        </section>
+        <div class="products-count">
+            <?php
+            $posts_count = wp_count_posts('post');
+            $published_posts_count = $posts_count->publish;
+
+            echo '<p>Products in Stock: <span class="stock-count">' . $published_posts_count . '</span></p>';
+            ?>
+        </div>
+    </div>
 </main>
 
 <?php

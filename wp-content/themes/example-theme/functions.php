@@ -46,10 +46,22 @@ function theme_setup(): void {
 
 add_action( 'after_setup_theme', 'theme_setup' );
 
+// greeting message
 
+function custom_greeting() {
+    $hour = date('H');
+    if ($hour < 12) {
+        return "Good morning!";
+    } elseif ($hour < 17) {
+        return "Good afternoon!";
+    } else {
+        return "Good evening!";
+    }
+}
 
-
-
+function add_greeting() {
+    echo "<p class='greeting'>" . custom_greeting() . "</p>";
+}
 
 
 // load styles
@@ -59,6 +71,7 @@ function style_setup(): void {
 }
 
 add_action( 'wp_enqueue_scripts', 'style_setup' );
+
 
 
 
