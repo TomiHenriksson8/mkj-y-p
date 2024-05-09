@@ -95,6 +95,7 @@ get_header();
         ?>
         </div>
     </section>
+
     <div class="products-search-wrapper">
         <section class="search">
             <h2 class="search-header">Search For Products</h2>

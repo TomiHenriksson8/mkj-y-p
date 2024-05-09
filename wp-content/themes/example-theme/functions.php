@@ -1,5 +1,12 @@
 <?php
 
+add_action('init', 'start_my_session', 1);
+function start_my_session() {
+    if (!session_id()) {
+        session_start();
+    }
+}
+
 // filters
 function search_filter( $query ) {
 	if ( $query->is_search ) {
@@ -62,6 +69,105 @@ function custom_greeting() {
 function add_greeting() {
     echo "<p class='greeting'>" . custom_greeting() . "</p>";
 }
+
+
+//
+
+function add_custom_meta_box() {
+    add_meta_box(
+        'custom_meta_box',       // ID of the meta box
+        'Product Details',       // Title of the meta box
+        'show_custom_meta_box',  // Callback function that will echo the content of the meta box
+        'post',                  // Post type where the meta box will appear
+        'normal',                // Context where the box will appear ('normal', 'side', 'advanced')
+        'high'                   // Priority of the box in the context
+    );
+}
+add_action('add_meta_boxes', 'add_custom_meta_box');
+
+
+function show_custom_meta_box($post) {
+    // Use nonce for verification to secure data sent
+    wp_nonce_field(basename(__FILE__), 'custom_meta_box_nonce');
+
+    // Get the value already saved if it exists
+    $price = get_post_meta($post->ID, 'price', true);
+
+    // The HTML for your meta box form
+    echo '<label for="price">Price:</label>';
+    echo '<input type="text" id="price" name="price" value="' . esc_attr($price) . '" />';
+}
+
+function save_custom_meta_box_data($post_id) {
+    // Check if our nonce is set and verify it.
+    if (!isset($_POST['custom_meta_box_nonce']) || !wp_verify_nonce($_POST['custom_meta_box_nonce'], basename(__FILE__))) {
+        return $post_id;
+    }
+
+    // Check the user's permissions.
+    if ('post' === $_POST['post_type']) {
+        if (!current_user_can('edit_post', $post_id)) {
+            return $post_id;
+        }
+    } else {
+        if (!current_user_can('edit_page', $post_id)) {
+            return $post_id;
+        }
+    }
+
+    // If this is an autosave, our form has not been submitted, so we don't want to do anything.
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return $post_id;
+    }
+
+    // Sanitize user input.
+    $new_price = (isset($_POST['price']) ? sanitize_text_field($_POST['price']) : '');
+
+    // Update the meta field in the database.
+    update_post_meta($post_id, 'price', $new_price);
+}
+add_action('save_post', 'save_custom_meta_box_data');
+
+//
+
+add_action('init', 'handle_add_to_cart');
+function handle_add_to_cart() {
+    if (isset($_POST['add_to_cart']) && !empty($_POST['product_id']) && !empty($_POST['product_price'])) {
+        if (!session_id()) {
+            session_start();
+        }
+
+        $product_id = intval($_POST['product_id']);
+        $product_price = floatval($_POST['product_price']);
+
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = array();
+        }
+
+        if (!isset($_SESSION['cart'][$product_id])) {
+            $_SESSION['cart'][$product_id] = array('quantity' => 1, 'price' => $product_price);
+        } else {
+            $_SESSION['cart'][$product_id]['quantity'] += 1; // Increment the quantity
+        }
+
+        wp_redirect(get_permalink($product_id)); // Refresh the page to show the updated cart
+        exit;
+    }
+}
+
+
+function display_cart_contents(): void
+{
+    if (!empty($_SESSION['cart'])) {
+        echo '<h3>Your Shopping Cart</h3>';
+        echo '<ul>';
+        foreach ($_SESSION['cart'] as $id => $details) {
+            echo '<li>' . get_the_title($id) . ' - Quantity: ' . $details['quantity'] . ' at $' . $details['price'] . ' each</li>';
+        }
+        echo '</ul>';
+    }
+}
+
 
 
 // load styles

@@ -10,7 +10,7 @@ get_header();
             echo '<p>' . category_description() . '</p>';
             ?>
         </div>
-        <img class="random-product-img" src="<?php echo get_random_post_image(get_queried_object_id()); ?>" alt="hero">
+        <img class="product-img" src="<?php echo get_template_directory_uri(); ?>/images/products-slide.jpg" alt="hero">
     </section>
     <main>
         <div class="product-text-container">

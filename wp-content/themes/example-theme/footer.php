@@ -34,6 +34,32 @@
     <article class="single" id="modal-content"></article>
 </dialog>
 
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cartModalLabel">Shopping Cart</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php display_cart_contents();?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <?php if (!empty($_SESSION['cart']) && array_sum(array_column($_SESSION['cart'], 'quantity')) > 0): ?>
+                    <a href="<?php echo esc_url(home_url('/thank-you?order=received')); ?>" class="btn btn-primary">Proceed to Checkout</a>
+
+                <?php else: ?>
+                    <button class="btn btn-primary" disabled>Proceed to Checkout</button>
+                <?php endif; ?>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <?php wp_footer(); ?>
 </body>
 </html>
