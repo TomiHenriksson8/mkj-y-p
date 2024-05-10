@@ -88,13 +88,14 @@ get_header();
     <section class="products">
         <h2>Featured Products</h2>
         <div>
-        <?php
-        $args = ['tag' => 'featured', 'posts_per_page' => 4];
-        $products = new WP_Query($args);
-        generate_article($products);
-        ?>
+            <?php
+            $args = ['tag' => 'featured', 'posts_per_page' => 4];
+            $products = new WP_Query($args);
+            generate_article($products);
+            ?>
         </div>
     </section>
+
 
     <div class="products-search-wrapper">
         <section class="search">

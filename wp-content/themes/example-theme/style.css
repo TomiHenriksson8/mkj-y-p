@@ -485,9 +485,9 @@ footer {
 }
 
 .products-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
     margin-bottom: 30px;
 }
 
@@ -525,6 +525,14 @@ footer {
     color: #666;
     margin-bottom: 15px;
 }
+
+.modal-button-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
 
 .view-all-container {
     text-align: center;
@@ -713,7 +721,36 @@ footer {
     background-color: #0056b3;
 }
 
+/* thank you page */
 
+.thank-you-message {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,255,0.1); /* subtle blue shadow */
+    text-align: center;
+}
+.thank-you-message h1 {
+    color: black;
+}
+.thank-you-message p {
+    color: #333333;
+    line-height: 1.6;
+}
+.thank-you-message a {
+    color: white;
+    background-color: #0000ff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+.thank-you-message a.button:hover {
+    background-color: #1a75ff;
+}
+.thank-you-message a[href^="mailto:"] {
+    padding: 5px 5px;
+    background-color: #1a75ff;
+}
 
 button[disabled], .btn[disabled] {
     opacity: 0.65;
@@ -831,6 +868,13 @@ button[disabled], .btn[disabled] {
 
     .contact-info ul {
         padding-left: 20px;
+    }
+
+    .products-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 30px;
     }
 }
 
