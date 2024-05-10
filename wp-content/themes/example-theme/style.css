@@ -650,6 +650,71 @@ footer {
     background-color: #005077;
 }
 
+.add-to-cart-btn {
+    background-color: #0073aa;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.add-cart-like-container {
+    display: flex;
+    align-items: center;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #45a049;
+}
+
+
+/* Cart modal styling */
+.cart-items-list {
+    list-style: none;
+    padding: 0;
+}
+
+.cart-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.cart-decrease, .cart-remove {
+    margin-left: 10px;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.cart-decrease:hover, .cart-remove:hover {
+    text-decoration: underline;
+}
+
+/* Button styling */
+.cart-modal-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-modal-footer button {
+    padding: 10px 20px;
+    color: white;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cart-modal-footer button:hover {
+    background-color: #0056b3;
+}
+
+
+
 button[disabled], .btn[disabled] {
     opacity: 0.65;
     cursor: not-allowed;

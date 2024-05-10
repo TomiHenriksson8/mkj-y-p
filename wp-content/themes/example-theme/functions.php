@@ -75,36 +75,31 @@ function add_greeting() {
 
 function add_custom_meta_box() {
     add_meta_box(
-        'custom_meta_box',       // ID of the meta box
-        'Product Details',       // Title of the meta box
-        'show_custom_meta_box',  // Callback function that will echo the content of the meta box
-        'post',                  // Post type where the meta box will appear
-        'normal',                // Context where the box will appear ('normal', 'side', 'advanced')
-        'high'                   // Priority of the box in the context
+        'custom_meta_box',
+        'Product Details',
+        'show_custom_meta_box',
+        'post',
+        'normal',
+        'high'
     );
 }
 add_action('add_meta_boxes', 'add_custom_meta_box');
 
 
 function show_custom_meta_box($post) {
-    // Use nonce for verification to secure data sent
     wp_nonce_field(basename(__FILE__), 'custom_meta_box_nonce');
 
-    // Get the value already saved if it exists
     $price = get_post_meta($post->ID, 'price', true);
 
-    // The HTML for your meta box form
     echo '<label for="price">Price:</label>';
     echo '<input type="text" id="price" name="price" value="' . esc_attr($price) . '" />';
 }
 
 function save_custom_meta_box_data($post_id) {
-    // Check if our nonce is set and verify it.
     if (!isset($_POST['custom_meta_box_nonce']) || !wp_verify_nonce($_POST['custom_meta_box_nonce'], basename(__FILE__))) {
         return $post_id;
     }
 
-    // Check the user's permissions.
     if ('post' === $_POST['post_type']) {
         if (!current_user_can('edit_post', $post_id)) {
             return $post_id;
@@ -115,7 +110,6 @@ function save_custom_meta_box_data($post_id) {
         }
     }
 
-    // If this is an autosave, our form has not been submitted, so we don't want to do anything.
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return $post_id;
     }
@@ -130,43 +124,66 @@ add_action('save_post', 'save_custom_meta_box_data');
 
 //
 
-add_action('init', 'handle_add_to_cart');
-function handle_add_to_cart() {
-    if (isset($_POST['add_to_cart']) && !empty($_POST['product_id']) && !empty($_POST['product_price'])) {
-        if (!session_id()) {
-            session_start();
-        }
+function handle_cart_actions() {
+    if (!session_id()) {
+        session_start();
+    }
 
+
+    function redirect_back() {
+        wp_redirect($_SERVER['HTTP_REFERER'] ?? home_url());
+        exit;
+    }
+
+    // Add to Cart
+    if (isset($_POST['add_to_cart']) && !empty($_POST['product_id']) && isset($_POST['product_price'])) {
         $product_id = intval($_POST['product_id']);
         $product_price = floatval($_POST['product_price']);
+        $_SESSION['cart'][$product_id] = $_SESSION['cart'][$product_id] ?? ['quantity' => 0, 'price' => $product_price];
+        $_SESSION['cart'][$product_id]['quantity'] += 1;
+        redirect_back();
+    }
 
-        if (!isset($_SESSION['cart'])) {
-            $_SESSION['cart'] = array();
+    // Decrease Quantity or Remove Item
+    if (isset($_GET['action']) && !empty($_GET['product_id'])) {
+        $product_id = intval($_GET['product_id']);
+
+        if ($_GET['action'] == 'decrease_quantity' && isset($_SESSION['cart'][$product_id])) {
+            if ($_SESSION['cart'][$product_id]['quantity'] > 1) {
+                $_SESSION['cart'][$product_id]['quantity']--;
+            } else {
+                unset($_SESSION['cart'][$product_id]);
+            }
+            redirect_back();
+        } elseif ($_GET['action'] == 'remove_item') {
+            unset($_SESSION['cart'][$product_id]);
+            redirect_back();
         }
+    }
 
-        if (!isset($_SESSION['cart'][$product_id])) {
-            $_SESSION['cart'][$product_id] = array('quantity' => 1, 'price' => $product_price);
-        } else {
-            $_SESSION['cart'][$product_id]['quantity'] += 1; // Increment the quantity
-        }
-
-        wp_redirect(get_permalink($product_id)); // Refresh the page to show the updated cart
+    // Clear Cart
+    if (isset($_GET['action']) && $_GET['action'] == 'clear_cart') {
+        $_SESSION['cart'] = [];
+        wp_redirect(home_url('/thank-you'));  // Optionally redirect to a "Thank You" or confirmation page
         exit;
     }
 }
+add_action('init', 'handle_cart_actions');
 
-
-function display_cart_contents(): void
-{
+function display_cart_contents() {
     if (!empty($_SESSION['cart'])) {
-        echo '<h3>Your Shopping Cart</h3>';
-        echo '<ul>';
+        echo '<ul class="cart-items-list">';  // Add a class to the list
         foreach ($_SESSION['cart'] as $id => $details) {
-            echo '<li>' . get_the_title($id) . ' - Quantity: ' . $details['quantity'] . ' at $' . $details['price'] . ' each</li>';
+            echo '<li class="cart-item">';  // Add a class to each item
+            echo get_the_title($id) . ' - Quantity: ' . $details['quantity'] . ' at $' . $details['price'] . ' each ';
+            echo '<a href="?action=decrease_quantity&product_id=' . $id . '" class="cart-decrease">Decrease</a> ';
+            echo '<a href="?action=remove_item&product_id=' . $id . '" class="cart-remove">Remove</a>';
+            echo '</li>';
         }
         echo '</ul>';
     }
 }
+
 
 
 
@@ -187,7 +204,7 @@ add_action( 'wp_enqueue_scripts', 'style_setup' );
 
 function mytheme_enqueue_bootstrap(): void {
     // Enqueue Bootstrap CSS
-    wp_enqueue_style('bootstrap-css', get_stylesheet_directory_uri() . '/css/bootstrap.css' );
+    wp_enqueue_style('bootstrap-css', get_stylesheet_directory_uri() . '/css/bootstrap.css');
     // Enqueue Bootstrap JavaScript
     wp_enqueue_script('bootstrap-js', get_stylesheet_directory_uri() . '/js/bootstrap.bundle.js', array('jquery'), null, true );
 }
@@ -222,7 +239,14 @@ function my_theme_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_scripts' );
 
 
+function enqueue_custom_scripts() {
+    wp_enqueue_script('custom-cart-actions', get_template_directory_uri() . '/js/custom-cart-actions.js', array('jquery'), null, true);
+    wp_localize_script('custom-cart-actions', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+}
+add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
+
+
 // custom functions
-require_once( __DIR__ . '/inc/article-function.php' );
-require_once( __DIR__ . '/inc/random-image.php' );
-require_once( __DIR__ . '/ajax-functions/single-post-function.php' );
+require_once(__DIR__ . '/inc/article-function.php');
+require_once(__DIR__ . '/inc/random-image.php');
+require_once(__DIR__ . '/ajax-functions/single-post-function.php');

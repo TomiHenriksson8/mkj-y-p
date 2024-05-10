@@ -18,18 +18,23 @@ get_header();
                     }
 
                     // Add to Cart form
-                    echo '<form action="" method="post">';
-                    echo '<input type="hidden" name="product_id" value="' . get_the_ID() . '">';
-                    echo '<input type="hidden" name="product_price" value="' . esc_attr($price) . '">';
-                    echo '<input type="submit" name="add_to_cart" value="Add to Cart">';
-                    echo '</form>';
+                    ?>
 
-                endwhile;
-            else :
-                _e('Sorry, no posts matched your criteria.', 'esimerkki');
-            endif;
-            ?>
-            <?php echo do_shortcode('[like_button]'); ?>
+                    <div class="add-cart-like-container">
+                        <?php
+                        echo '<form action="" method="post" style="text-align: end">';
+                        echo '<input type="hidden" name="product_id" value="' . get_the_ID() . '">';
+                        echo '<input type="hidden" name="product_price" value="' . esc_attr($price) . '">';
+                        echo '<input type="submit" name="add_to_cart" value="Add to Cart" class="add-to-cart-btn">';
+                        echo '</form>';
+
+                            endwhile;
+                        else :
+                            _e('Sorry, no posts matched your criteria.', 'esimerkki');
+                        endif;
+                        ?>
+                        <?php echo do_shortcode('[like_button]'); ?>
+                    </div>
         </article>
     </section>
 </main>
