@@ -49,7 +49,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <?php if (!empty($_SESSION['cart']) && array_sum(array_column($_SESSION['cart'], 'quantity')) > 0): ?>
-                    <a href="<?php echo esc_url(home_url('/thank-you?action=clear_cart')); ?>" class="btn btn-primary">Proceed to Checkout</a>
+                    <a href="<?php echo esc_url(home_url('/payment-information')); ?>" class="btn btn-primary">Proceed to Payment</a>
 
                 <?php else: ?>
                     <button class="btn btn-primary" disabled>Proceed to Checkout</button>
